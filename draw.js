@@ -1,3 +1,4 @@
+var drawWalls = false;
 var walls = [];
 var rays = [];
 var lookingAngle = 180;
@@ -19,6 +20,16 @@ function setup() {
     }
 }
 
+function keyPressed() {
+    if (keyCode === UP_ARROW) {
+        if (drawWalls) {
+            drawWalls = false;
+        } else {
+            drawWalls = true;
+        }
+    }
+}
+
 function draw() {
     background(0);
 
@@ -36,16 +47,22 @@ function draw() {
     }
 
     for (let ray of rays) {
+        let wallCollided = walls[0];
         for (let item of walls) {
             let wallCollisionVector = ray.checkIfCollision(item.initialPosition.x,item.initialPosition.y, item.finalPosition.x, item.finalPosition.y);
 
             if (wallCollisionVector.dist(ray.sourcePositionVector) < ray.collisionVector.dist(ray.sourcePositionVector)) {
                 ray.collisionVector = wallCollisionVector;
+                wallCollided = item;
+            }
+
+            if (drawWalls) {
+                item.draw();
             }
 
         }
 
-        ray.handleCollision();
+        ray.handleCollision(wallCollided.color);
     }
 
     

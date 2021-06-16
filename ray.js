@@ -19,12 +19,13 @@ class Ray {
         stroke(255, 255, 255);
     }
 
-    handleCollision() {
+    handleCollision(color) {
         // line(this.sourcePositionVector.x, this.sourcePositionVector.y, this.collisionVector.x, this.collisionVector.y);
         circle(this.collisionVector.x, this.collisionVector.y, 3);
         let heightOfLine = 10000 / dist(this.sourcePositionVector.x, this.sourcePositionVector.y, this.collisionVector.x, this.collisionVector.y);
-        line(this.numOfRay * 2, (windowHeight * 0.5) - heightOfLine, this.numOfRay * 2, (windowHeight * 0.5) + heightOfLine);
-        stroke(255, 255, 255);
+        stroke(color.x, color.y, color.z);
+        line(this.numOfRay * 4 + 10, (windowHeight * 0.5) - heightOfLine, this.numOfRay * 4 + 10, (windowHeight * 0.5) + heightOfLine);
+
         console.log(heightOfLine);
     }
 
