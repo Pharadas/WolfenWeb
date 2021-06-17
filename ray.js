@@ -11,7 +11,6 @@ class Ray {
 
         this.collisionVector = createVector(Infinity, Infinity);
 
-        this.resolution = resolution;
         this.numOfRay = numOfRay;
 
         this.rayResolution = windowWidth / resolution;
@@ -40,7 +39,8 @@ class Ray {
             // strokeWeight(15);
             // strokeWeight(1);
             fill(color.x, color.y, color.z);
-            rect(linePosition, (windowHeight * 0.5) - heightOfLine, 15, heightOfLine * 2)
+            
+            rect(linePosition, (windowHeight * 0.5) - heightOfLine, linePosition + 15, (windowHeight * 0.5) + heightOfLine)
             // rect(linePosition, (windowHeight * 0.5), 10, -heightOfLine * 2)
             // line(linePosition, (windowHeight * 0.5) - heightOfLine, linePosition, (windowHeight * 0.5) + heightOfLine); // this.numOfRay * 4 + 10
         }
@@ -61,7 +61,7 @@ class Ray {
         if (t > 0 && t < 1 && u > 0 && u < 1) {
             const pointX = x1 + t * (x2 - x1);
             const pointY = y1 + t * (y2 - y1);
-        
+
             // circle(pointX, pointY, 10);
 
             return createVector(pointX, pointY);

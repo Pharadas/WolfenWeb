@@ -21,6 +21,7 @@ function setup() {
     }
 
     playerPosition = createVector(windowWidth * 0.5, windowHeight * 0.5);
+    rectMode(CORNERS);
 }
 
 function keyPressed() {
@@ -36,6 +37,13 @@ function keyPressed() {
 function draw() {
     background(0);
 
+    if (!drawWalls) {
+        fill(0, 0, 0);
+        rect(0, 0, windowWidth, windowHeight * 0.5);
+        fill(100, 100, 100);
+        rect(0, windowHeight * 0.5, windowWidth, windowHeight);
+    }
+
     if (keyIsDown(LEFT_ARROW)) {
         lookingAngle += 3;
     }
@@ -46,24 +54,53 @@ function draw() {
 
     if (keyIsDown(UP_ARROW)) {
         let thisViewVector = p5.Vector.fromAngle(radians(lookingAngle - 50));
-        thisViewVector.normalize();
         thisViewVector.mult(3);
 
-        playerPosition.x += thisViewVector.x;
-        playerPosition.y += thisViewVector.y;
+        thisViewVector.x += playerPosition.x;
+        thisViewVector.y += playerPosition.y;
+
+        const validationRay = new Ray(playerPosition.x, playerPosition.y, lookingAngle - 50, false);
+        let canMove = true;
+
+        for (wall of walls) {
+            if (validationRay.checkIfCollision(wall.initialPosition.x,wall.initialPosition.y, wall.finalPosition.x, wall.finalPosition.y).dist(playerPosition) < 3) {
+                canMove = false;
+                break
+            }
+        }
+
+        if (canMove) {
+            playerPosition.x = thisViewVector.x;
+            playerPosition.y = thisViewVector.y;
+        }
     }
 
     if (keyIsDown(DOWN_ARROW)) {
-        let thisViewVector = p5.Vector.fromAngle(radians(lookingAngle - 50));
-        thisViewVector.normalize();
-        thisViewVector.mult(2);
+        let thisViewVector = p5.Vector.fromAngle(radians(lookingAngle + 130));
+        thisViewVector.mult(3);
 
-        playerPosition.x -= thisViewVector.x;
-        playerPosition.y -= thisViewVector.y;
+        thisViewVector.x += playerPosition.x;
+        thisViewVector.y += playerPosition.y;
+
+        const validationRay = new Ray(playerPosition.x, playerPosition.y, lookingAngle + 130, false);
+        let canMove = true;
+
+        for (wall of walls) {
+            if (validationRay.checkIfCollision(wall.initialPosition.x,wall.initialPosition.y, wall.finalPosition.x, wall.finalPosition.y).dist(playerPosition) < 3) {
+                canMove = false;
+            }
+        }
+
+        if (canMove) {
+            playerPosition.x = thisViewVector.x;
+            playerPosition.y = thisViewVector.y;
+        }
+
     }
 
-
-    circle(playerPosition.x, playerPosition.y, 5);
+    if (drawWalls) {
+        circle(playerPosition.x, playerPosition.y, 5);
+    }
 
     for (let i = 0; i < 100; i += 1) {
         rays[i] = new Ray(playerPosition.x, playerPosition.y, lookingAngle - i, i, 100, drawWalls);
@@ -86,9 +123,12 @@ function draw() {
         }
 
         ray.handleCollision(wallCollided.color);
-        if (drawWalls) {
-            ray.draw();
-        }
+        // if (drawWalls) {
+        //     ray.draw();
+        // }
+    }
+    if (drawWalls) {
+        rays[49].draw();
     }
     
 }
