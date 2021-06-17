@@ -2,6 +2,7 @@ var drawWalls = false;
 var walls = [];
 var rays = [];
 var lookingAngle = 180;
+var playerPosition;
 
 // walls.push(new Wall(0, 0, windowWidth, 0));
 // walls.push(new Wall(0, 0, 0, windowHeight));
@@ -18,10 +19,12 @@ function setup() {
     for (let i = 0; i < 10; i++) {
         walls.push(new Wall(randNumRange(0, windowWidth), randNumRange(0, windowHeight), randNumRange(0, windowWidth), randNumRange(0, windowHeight)))
     }
+
+    playerPosition = createVector(windowWidth * 0.5, windowHeight * 0.5);
 }
 
 function keyPressed() {
-    if (keyCode === UP_ARROW) {
+    if (keyCode === 72) {
         if (drawWalls) {
             drawWalls = false;
         } else {
@@ -34,16 +37,36 @@ function draw() {
     background(0);
 
     if (keyIsDown(LEFT_ARROW)) {
-        lookingAngle -= 1;
+        lookingAngle += 3;
     }
 
     if (keyIsDown(RIGHT_ARROW)) {
-        lookingAngle += 1;
+        lookingAngle -= 3;
     }
 
-    // let thisRay = new Ray(mouseX, mouseY, lookingAngle);
-    for (let i = 0; i < 60; i++) {
-        rays[i] = new Ray(mouseX, mouseY, lookingAngle - i, i);
+    if (keyIsDown(UP_ARROW)) {
+        let thisViewVector = p5.Vector.fromAngle(radians(lookingAngle - 50));
+        thisViewVector.normalize();
+        thisViewVector.mult(3);
+
+        playerPosition.x += thisViewVector.x;
+        playerPosition.y += thisViewVector.y;
+    }
+
+    if (keyIsDown(DOWN_ARROW)) {
+        let thisViewVector = p5.Vector.fromAngle(radians(lookingAngle - 50));
+        thisViewVector.normalize();
+        thisViewVector.mult(2);
+
+        playerPosition.x -= thisViewVector.x;
+        playerPosition.y -= thisViewVector.y;
+    }
+
+
+    circle(playerPosition.x, playerPosition.y, 5);
+
+    for (let i = 0; i < 100; i += 1) {
+        rays[i] = new Ray(playerPosition.x, playerPosition.y, lookingAngle - i, i, 100, drawWalls);
     }
 
     for (let ray of rays) {
@@ -63,8 +86,10 @@ function draw() {
         }
 
         ray.handleCollision(wallCollided.color);
+        if (drawWalls) {
+            ray.draw();
+        }
     }
-
     
 }
 

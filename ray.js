@@ -1,5 +1,5 @@
 class Ray {
-    constructor(x1, y1, angle, numOfRay) {
+    constructor(x1, y1, angle, numOfRay, resolution, drawWalls) {
         this.sourcePositionVector = createVector(x1, y1);
         this.directionVector = p5.Vector.fromAngle(radians(angle));
         this.directionVector.normalize();
@@ -11,7 +11,11 @@ class Ray {
 
         this.collisionVector = createVector(Infinity, Infinity);
 
+        this.resolution = resolution;
         this.numOfRay = numOfRay;
+
+        this.rayResolution = windowWidth / resolution;
+        this.drawWalls = drawWalls;
     }
 
     draw() {
@@ -21,12 +25,26 @@ class Ray {
 
     handleCollision(color) {
         // line(this.sourcePositionVector.x, this.sourcePositionVector.y, this.collisionVector.x, this.collisionVector.y);
-        circle(this.collisionVector.x, this.collisionVector.y, 3);
-        let heightOfLine = 10000 / dist(this.sourcePositionVector.x, this.sourcePositionVector.y, this.collisionVector.x, this.collisionVector.y);
-        stroke(color.x, color.y, color.z);
-        line(this.numOfRay * 4 + 10, (windowHeight * 0.5) - heightOfLine, this.numOfRay * 4 + 10, (windowHeight * 0.5) + heightOfLine);
+        let heightOfLine = (dist(this.sourcePositionVector.x, this.sourcePositionVector.y, this.collisionVector.x, this.collisionVector.y)) * Math.cos(radians(50 - this.numOfRay));
+        heightOfLine = 8000 / heightOfLine;
 
-        console.log(heightOfLine);
+        if (this.drawWalls) {
+            circle(this.collisionVector.x, this.collisionVector.y, 3);
+        }
+
+        const linePosition = this.rayResolution * this.numOfRay;
+
+        if (!this.drawWalls) {
+            // stroke(color.x, color.y, color.z);
+            // stroke(255, 255, 255);
+            // strokeWeight(15);
+            // strokeWeight(1);
+            fill(color.x, color.y, color.z);
+            rect(linePosition, (windowHeight * 0.5) - heightOfLine, 15, heightOfLine * 2)
+            // rect(linePosition, (windowHeight * 0.5), 10, -heightOfLine * 2)
+            // line(linePosition, (windowHeight * 0.5) - heightOfLine, linePosition, (windowHeight * 0.5) + heightOfLine); // this.numOfRay * 4 + 10
+        }
+
     }
 
     checkIfCollision(x1, y1, x2, y2) {
