@@ -1,8 +1,9 @@
 class Wall {
-    constructor(x1, y1, x2, y2) {
+    constructor(x1, y1, x2, y2, words) {
         this.initialPosition = createVector(x1, y1);
         this.finalPosition = createVector(x2, y2);
         this.color = createVector(random(255), random(255), random(255));
+        this.words = words;
     }
 
     draw() {
