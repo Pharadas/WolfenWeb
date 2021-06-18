@@ -22,10 +22,11 @@ class Ray {
         stroke(255, 255, 255);
     }
 
-    handleCollision(color) {
+    handleCollision(color, words, wordUsed) {
         // line(this.sourcePositionVector.x, this.sourcePositionVector.y, this.collisionVector.x, this.collisionVector.y);
-        let heightOfLine = (dist(this.sourcePositionVector.x, this.sourcePositionVector.y, this.collisionVector.x, this.collisionVector.y)) * Math.cos(radians(50 - this.numOfRay));
-        heightOfLine = 8000 / heightOfLine;
+        let distanceToWall = dist(this.sourcePositionVector.x, this.sourcePositionVector.y, this.collisionVector.x, this.collisionVector.y) * Math.cos(radians(50 - this.numOfRay));
+        let heightOfLine = (distanceToWall);
+        heightOfLine = 25000 / heightOfLine;
 
         if (this.drawWalls) {
             circle(this.collisionVector.x, this.collisionVector.y, 3);
@@ -34,17 +35,32 @@ class Ray {
         const linePosition = this.rayResolution * this.numOfRay;
 
         if (!this.drawWalls) {
+            let colorOffset = distanceToWall * 0.2;
+
+            // HAVE 'LIGHTING'
+            // stroke(0, 0, 0);
+            stroke(color.x - colorOffset, color.y - colorOffset, color.z - colorOffset);
+            fill(color.x - colorOffset, color.y - colorOffset, color.z - colorOffset);
+
+            // NO 'LIGHTING'
             // stroke(color.x, color.y, color.z);
-            // stroke(255, 255, 255);
-            // strokeWeight(15);
-            // strokeWeight(1);
-            fill(color.x, color.y, color.z);
-            
-            rect(linePosition, (windowHeight * 0.5) - heightOfLine, linePosition + 15, (windowHeight * 0.5) + heightOfLine)
-            // rect(linePosition, (windowHeight * 0.5), 10, -heightOfLine * 2)
-            // line(linePosition, (windowHeight * 0.5) - heightOfLine, linePosition, (windowHeight * 0.5) + heightOfLine); // this.numOfRay * 4 + 10
+            // fill(color.x, color.y, color.z);
+
+            rect(linePosition, (windowHeight * 0.5) - heightOfLine, linePosition + 17, (windowHeight * 0.5) + heightOfLine)
         }
 
+        if (wordUsed) {
+            return true;
+        } else {
+            if (words != '') {
+                // fill(0, 0, 0);
+                // stroke(0, 0, 0);
+                // text(words, linePosition, windowHeight * 0.5);
+                return true, linePosition, words;
+            }
+        }
+
+        return false;
     }
 
     checkIfCollision(x1, y1, x2, y2) {
