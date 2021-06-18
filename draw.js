@@ -1,27 +1,32 @@
+// window.location.replace("http://www.w3schools.com");
 var drawWalls = false;
 var walls = [];
 var rays = [];
 var lookingAngle = 180;
 var playerPosition;
 
-// walls.push(new Wall(0, 0, windowWidth, 0));
-// walls.push(new Wall(0, 0, 0, windowHeight));
-
 function setup() {
     createCanvas(windowWidth, windowHeight);
     background(0);
-    
-    walls.push(new Wall(0, windowHeight - 10, windowWidth, windowHeight - 10));
-    walls.push(new Wall(0, 0, 0, windowHeight));
-    walls.push(new Wall(0, 0, windowWidth, 0));
-    walls.push(new Wall(windowWidth, 0, windowWidth - 10, windowHeight - 10));
 
-    for (let i = 0; i < 10; i++) {
-        walls.push(new Wall(randNumRange(0, windowWidth), randNumRange(0, windowHeight), randNumRange(0, windowWidth), randNumRange(0, windowHeight)))
-    }
+    // push border walls
+    walls.push(new Wall(0, windowHeight - 10, windowWidth, windowHeight - 10, ''));
+    walls.push(new Wall(0, 0, 0, windowHeight, ''));
+    walls.push(new Wall(0, 0, windowWidth, 0, ''));
+    walls.push(new Wall(windowWidth, 0, windowWidth - 10, windowHeight - 10, ''));
+
+    // push text wall
+    walls.push(new Wall(windowWidth * 0.5, windowHeight * 0.5, (windowWidth * 0.5) + 5, windowHeight * 0.5, 'words\nwords\nwords'));
+
+    // fill with random walls
+    // for (let i = 0; i < 8; i++) {
+    //     walls.push(new Wall(randNumRange(0, windowWidth), randNumRange(0, windowHeight), randNumRange(0, windowWidth), randNumRange(0, windowHeight), ''))
+    // }
 
     playerPosition = createVector(windowWidth * 0.5, windowHeight * 0.5);
     rectMode(CORNERS);
+    textSize(30);
+    textAlign(CENTER, CENTER);
 }
 
 function keyPressed() {
@@ -37,10 +42,12 @@ function keyPressed() {
 function draw() {
     background(0);
 
+    let rayWords;
+
     if (!drawWalls) {
-        fill(0, 0, 0);
+        fill(56, 56, 56);
         rect(0, 0, windowWidth, windowHeight * 0.5);
-        fill(100, 100, 100);
+        fill(112, 112, 112);
         rect(0, windowHeight * 0.5, windowWidth, windowHeight);
     }
 
@@ -68,7 +75,7 @@ function draw() {
                 break
             }
         }
-
+        
         if (canMove) {
             playerPosition.x = thisViewVector.x;
             playerPosition.y = thisViewVector.y;
@@ -109,7 +116,7 @@ function draw() {
     for (let ray of rays) {
         let wallCollided = walls[0];
         for (let item of walls) {
-            let wallCollisionVector = ray.checkIfCollision(item.initialPosition.x,item.initialPosition.y, item.finalPosition.x, item.finalPosition.y);
+            let wallCollisionVector = ray.checkIfCollision(item.initialPosition.x, item.initialPosition.y, item.finalPosition.x, item.finalPosition.y);
 
             if (wallCollisionVector.dist(ray.sourcePositionVector) < ray.collisionVector.dist(ray.sourcePositionVector)) {
                 ray.collisionVector = wallCollisionVector;
@@ -122,21 +129,31 @@ function draw() {
 
         }
 
-        ray.handleCollision(wallCollided.color);
+        ray.handleCollision(wallCollided.color, wallCollided.words, false);
+        // let handleRayCollisionAnswer = ray.handleCollision(wallCollided.color, wallCollided.words, rayWords[0]);
+        // if (handleRayCollisionAnswer[0]) {
+        //     rayWords = handleRayCollisionAnswer;
+        // }
         // if (drawWalls) {
         //     ray.draw();
         // }
     }
+
     if (drawWalls) {
         rays[49].draw();
     }
-    
+
+
+    // fill(0, 0, 0);
+    // stroke(0, 0, 0);
+    // text(rayWords[2], rayWords[1], windowHeight * 0.5);
+
 }
 
 function windowResized() {
     resizeCanvas(windowWidth, windowHeight);
     background(0);
-    
+
     walls[0] = new Wall(0, windowHeight - 10, windowWidth, windowHeight - 10);
     walls[1] = new Wall(0, 0, 0, windowHeight);
     walls[2] = new Wall(0, 0, windowWidth, 0);
